@@ -156,6 +156,91 @@ class MainController extends Controller
         }
     }
      public function websocket(){
+        set_time_limit(0);
+        ini_set("default_socket_timeout", '-1');
+
+        define('HOST_NAME',"127.0.0.1");
+        define('PORT',"8080");
+        $null = NULL;
+
+        require_once("class.MsgHandler.php");
+        $msgHandler = new MsgHandler();
+
+        require_once("class.mongoDB.php");
+        $mongoDB = new ocppMongo();
+
+        $socketResource = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        socket_set_option($socketResource, SOL_SOCKET, SO_REUSEADDR, 1);
+        socket_bind($socketResource, 0, PORT);
+        socket_listen($socketResource);
+
+        $csArray = array();
+        $clientSocketArray = array($socketResource);
+        while (true) {
+                $newSocketArray = $clientSocketArray;
+                socket_select($newSocketArray, $null, $null, 0, 10);
+
+                if (in_array($socketResource, $newSocketArray)) {
+                        $newSocket = socket_accept($socketResource);
+                        $clientSocketArray[] = $newSocket;
+
+                        $header = socket_read($newSocket, 1024);
+                        socket_getpeername($newSocket, $client_ip_address);
+
+                        $chargeStation = $msgHandler->validateRequestURL($header, $client_ip_address);
+
+                        $msgHandler->logHeaders($client_ip_address, $header);
+
+                        if(empty($chargeStation) || (strpos($chargeStation, '/') !== false)) {
+                                $connectionACK = $msgHandler->connectionDisconnectACK($client_ip_address);
+                        }else {
+                                $msgHandler->doHandshake($header, $newSocket, HOST_NAME, PORT);
+                                $connectionACK = $msgHandler->newConnectionACK($client_ip_address);
+                                $mongoDB->updateStatus($chargeStation, 'ON');
+                                $csArray["$newSocket"] = $chargeStation;
+                        }
+
+                        $msgHandler->send($connectionACK, $newSocket);
+
+                        $newSocketIndex = array_search($socketResource, $newSocketArray);
+                        unset($newSocketArray[$newSocketIndex]);
+                }
+
+                foreach ($newSocketArray as $newSocketArrayResource) {
+                        while(socket_recv($newSocketArrayResource, $socketData, 1024, 0) >= 1){
+                                $socketMessage = $msgHandler->unseal($socketData);
+                                $messageObj = json_decode($socketMessage);
+
+                                $csName = $csArray["$newSocketArrayResource"];
+
+                                $msgHandler->logMsg($client_ip_address, $socketMessage, $csName);
+
+                                // echo "chargeStation". $chargeStation;
+                                // print_r($messageObj);
+
+                                $jsonResponse = $msgHandler->processMsg($client_ip_address, $csName, $messageObj, $mongoDB);
+
+                                $finalMsg = $msgHandler->logRespMsg($client_ip_address, $socketMessage, $csName, $jsonResponse                                                                               );
+
+                                //$chat_box_message = $msgHandler->createChatBoxMessage($messageObj->chat_user, $messageObj->c                                                                               hat_message);
+                                $msgHandler->send($finalMsg, $newSocketArrayResource);
+                                break 2;
+                        }
+
+                        $socketData = @socket_read($newSocketArrayResource, 1024, PHP_NORMAL_READ);
+                        if ($socketData === false) {
+                                socket_getpeername($newSocketArrayResource, $client_ip_address);
+                                $connectionACK = $msgHandler->connectionDisconnectACK($client_ip_address);
+                                $msgHandler->send($connectionACK, $newSocketArrayResource);
+                                $newSocketIndex = array_search($newSocketArrayResource, $clientSocketArray);
+                                unset($clientSocketArray[$newSocketIndex]);
+                                $csName = $csArray["$newSocketArrayResource"];
+                                $mongoDB->updateStatus($csName, 'OFF');
+                        }
+                }
+        }
+        socket_close($socketResource);
+
         // $client = new WebSocket\Client("ws://103.133.133.19:8080/webservice/ocpp/CS123");
         //     try {
         //         $message = $client->receive();
@@ -260,41 +345,41 @@ class MainController extends Controller
         //   }
         // }
         
-        error_reporting(E_ALL);
-        /* Get the port for the WWW service. */
-        $service_port = '8080';
+        // error_reporting(E_ALL);
+        // /* Get the port for the WWW service. */
+        // $service_port = '8080';
 
-        /* Get the IP address for the target host. */
-        $address = gethostbyname('103.133.133.19');
+        // /* Get the IP address for the target host. */
+        // $address = gethostbyname('103.133.133.19');
 
-        /* Create a TCP/IP socket. */
-        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        if ($socket === false) {
-            echo "socket_create() failed: reason: " . 
-                 socket_strerror(socket_last_error()) . "\n";
-        }
+        // /* Create a TCP/IP socket. */
+        // $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        // if ($socket === false) {
+        //     echo "socket_create() failed: reason: " . 
+        //          socket_strerror(socket_last_error()) . "\n";
+        // }
 
-        echo "Attempting to connect to '$address' on port '$service_port'...";
-        $result = socket_connect($socket, $address, $service_port);
-        if ($result === false) {
-            echo "socket_connect() failed.\nReason: ($result) " . 
-                  socket_strerror(socket_last_error($socket)) . "\n";
-        }
+        // echo "Attempting to connect to '$address' on port '$service_port'...";
+        // $result = socket_connect($socket, $address, $service_port);
+        // if ($result === false) {
+        //     echo "socket_connect() failed.\nReason: ($result) " . 
+        //           socket_strerror(socket_last_error($socket)) . "\n";
+        // }
 
-        $in = "HEAD / HTTP/1.1\r\n";
-        $in .= "Host: 103.133.133.19\r\n";
-        $in .= "Connection: Close\r\n\r\n";
-        $out = '';
+        // $in = "HEAD / HTTP/1.1\r\n";
+        // $in .= "Host: 103.133.133.19\r\n";
+        // $in .= "Connection: Close\r\n\r\n";
+        // $out = '';
 
-        echo "Sending HTTP HEAD request...";
-        socket_write($socket, $in, strlen($in));
-        echo "OK.\n";
+        // echo "Sending HTTP HEAD request...";
+        // socket_write($socket, $in, strlen($in));
+        // echo "OK.\n";
 
-        echo "Reading response:\n\n";
-        while ($out = socket_read($socket, 2048)) {
-            echo $out;
-        }
+        // echo "Reading response:\n\n";
+        // while ($out = socket_read($socket, 2048)) {
+        //     echo $out;
+        // }
 
-        socket_close($socket);
+        // socket_close($socket);
     }
 }
