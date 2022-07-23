@@ -334,52 +334,52 @@ class MainController extends Controller
             // // close socket
             // socket_close($socket);
 
-        $sock = stream_socket_client("ws://localhost:8080/webservice/ocpp/CS12",$error,$errnum,30,STREAM_CLIENT_CONNECT,stream_context_create(null));
-        if (!$sock) {
-            echo "[$errnum] $error" . PHP_EOL;
-        } else {
-          echo "Connected - Do NOT get rekt!" . PHP_EOL;
-          fwrite($sock, "GET /stream?streams=btcusdt@kline_1m HTTP/1.1\r\nHost: stream.binance.com:9443\r\nAccept: */*\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: ".rand(0,999)."\r\n\r\n");
-          while (!feof($sock)) {
-            var_dump(explode(",",fgets($sock, 512)));
-          }
-        }
+        // $sock = stream_socket_client("ws://localhost:8080/webservice/ocpp/CS12",$error,$errnum,30,STREAM_CLIENT_CONNECT,stream_context_create(null));
+        // if (!$sock) {
+        //     echo "[$errnum] $error" . PHP_EOL;
+        // } else {
+        //   echo "Connected - Do NOT get rekt!" . PHP_EOL;
+        //   fwrite($sock, "GET /stream?streams=btcusdt@kline_1m HTTP/1.1\r\nHost: stream.binance.com:9443\r\nAccept: */*\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: ".rand(0,999)."\r\n\r\n");
+        //   while (!feof($sock)) {
+        //     var_dump(explode(",",fgets($sock, 512)));
+        //   }
+        // }
         
-        // error_reporting(E_ALL);
-        // /* Get the port for the WWW service. */
-        // $service_port = '8080';
+        error_reporting(E_ALL);
+        /* Get the port for the WWW service. */
+        $service_port = '8080';
 
-        // /* Get the IP address for the target host. */
-        // $address = gethostbyname('103.133.133.19');
+        /* Get the IP address for the target host. */
+        $address = gethostbyname('103.133.133.19');
 
-        // /* Create a TCP/IP socket. */
-        // $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        // if ($socket === false) {
-        //     echo "socket_create() failed: reason: " . 
-        //          socket_strerror(socket_last_error()) . "\n";
-        // }
+        /* Create a TCP/IP socket. */
+        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        if ($socket === false) {
+            echo "socket_create() failed: reason: " . 
+                 socket_strerror(socket_last_error()) . "\n";
+        }
 
-        // echo "Attempting to connect to '$address' on port '$service_port'...";
-        // $result = socket_connect($socket, $address, $service_port);
-        // if ($result === false) {
-        //     echo "socket_connect() failed.\nReason: ($result) " . 
-        //           socket_strerror(socket_last_error($socket)) . "\n";
-        // }
+        echo "Attempting to connect to '$address' on port '$service_port'...";
+        $result = socket_connect($socket, $address, $service_port);
+        if ($result === false) {
+            echo "socket_connect() failed.\nReason: ($result) " . 
+                  socket_strerror(socket_last_error($socket)) . "\n";
+        }
 
-        // $in = "HEAD / HTTP/1.1\r\n";
-        // $in .= "Host: 103.133.133.19\r\n";
-        // $in .= "Connection: Close\r\n\r\n";
-        // $out = '';
+        $in = "HEAD / HTTP/1.1\r\n";
+        $in .= "Host: 103.133.133.19\r\n";
+        $in .= "Connection: Close\r\n\r\n";
+        $out = '';
 
-        // echo "Sending HTTP HEAD request...";
-        // socket_write($socket, $in, strlen($in));
-        // echo "OK.\n";
+        echo "Sending HTTP HEAD request...";
+        socket_write($socket, $in, strlen($in));
+        echo "OK.\n";
 
-        // echo "Reading response:\n\n";
-        // while ($out = socket_read($socket, 2048)) {
-        //     echo $out;
-        // }
+        echo "Reading response:\n\n";
+        while ($out = socket_read($socket, 2048)) {
+            echo $out;
+        }
 
-        // socket_close($socket);
+        socket_close($socket);
     }
 }
