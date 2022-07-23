@@ -350,7 +350,7 @@ class MainController extends Controller
         $service_port = '8080';
 
         /* Get the IP address for the target host. */
-        $address = gethostbyname('103.133.133.19');
+        $address = gethostbyname('localhost');
 
         /* Create a TCP/IP socket. */
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -367,7 +367,7 @@ class MainController extends Controller
         }
 
         $in = "HEAD / HTTP/1.1\r\n";
-        $in .= "Host: 103.133.133.19\r\n";
+        $in .= "Host: localhost\r\n";
         $in .= "Connection: Close\r\n\r\n";
         $out = '';
 
