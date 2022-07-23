@@ -15,7 +15,7 @@ use Session;
 use Response;
 use Validator;
 use URL;
-use Client;
+use WebSocket\Client;
 
 class MainController extends Controller
 {
@@ -241,56 +241,56 @@ class MainController extends Controller
         // }
         // socket_close($socketResource);
 
-        $client = new WebSocket\Client("ws://localhost:8080/webservice/ocpp/CS123");
-            try {
-                $message = $client->receive();
-                print_r($message);
-                echo "\n";
+        // $client = new \WebSocket\Client("ws://localhost:8080/webservice/ocpp/CS123");
+        //     try {
+        //         $message = $client->receive();
+        //         print_r($message);
+        //         echo "\n";
          
-              } catch (\WebSocket\ConnectionException $e) {
-                // Possibly log errors
-                print_r("Error: ".$e->getMessage());
-            }
-        while (true) {
-            try {
-                $message = $client->receive();
-                print_r($message);
-                echo "\n";
+        //       } catch (\WebSocket\ConnectionException $e) {
+        //         // Possibly log errors
+        //         print_r("Error: ".$e->getMessage());
+        //     }
+        // while (true) {
+        //     try {
+        //         $message = $client->receive();
+        //         print_r($message);
+        //         echo "\n";
          
-              } catch (\WebSocket\ConnectionException $e) {
-                // Possibly log errors
-                print_r("Error: ".$e->getMessage());
-            }
-        }
-        $client->close();
+        //       } catch (\WebSocket\ConnectionException $e) {
+        //         // Possibly log errors
+        //         print_r("Error: ".$e->getMessage());
+        //     }
+        // }
+        // $client->close();
 
-        // $host = '103.133.133.193';  //where is the websocket server
-        // $port = 8080;
-        // $local = "ws://103.133.133.19:8080/webservice/ocpp/CS12";  //url where this script run
-        // $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
-        // $head = "GET / HTTP/1.1"."\r\n".
-        //             "Upgrade: WebSocket"."\r\n".
-        //             "Connection: Upgrade"."\r\n".
-        //             "Origin: $local"."\r\n".
-        //             "Host: $host"."\r\n".
-        //             "Content-Length: ".strlen($data)."\r\n"."\r\n";
-        // //WebSocket handshake
-        // $sock = fsockopen($host, $port, $errno, $errstr, 2);
-        // fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
-        // $headers = fread($sock, 2000);
-        // fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
-        // $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
-        // fclose($sock);
-        // $port_number    = 8080;
-        // $IPadress_host    = "103.133.133.193";
-        // $hello_msg= "This is server";
-        // echo "Hitting the server :".$hello_msg;
-        // $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
-        // $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
-        // socket_write($socket_creation, $hello_msg, strlen($hello_msg)) or die("Unable to send data to the  server\n");
-        // $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
-        // echo "Message from the server :".$server_connect;
-        // socket_close($socket_creation);
+        $host = 'localhost';  //where is the websocket server
+        $port = 8080;
+        $local = "ws://localhost:8080/webservice/ocpp/CS12";  //url where this script run
+        $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
+        $head = "GET / HTTP/1.1"."\r\n".
+                    "Upgrade: WebSocket"."\r\n".
+                    "Connection: Upgrade"."\r\n".
+                    "Origin: $local"."\r\n".
+                    "Host: $host"."\r\n".
+                    "Content-Length: ".strlen($data)."\r\n"."\r\n";
+        //WebSocket handshake
+        $sock = fsockopen($host, $port, $errno, $errstr, 2);
+        fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
+        $headers = fread($sock, 2000);
+        fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
+        $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
+        fclose($sock);
+        $port_number    = 8080;
+        $IPadress_host    = "103.133.133.19";
+        $hello_msg= "This is server";
+        echo "Hitting the server :".$hello_msg;
+        $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
+        $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
+        socket_write($socket_creation, $hello_msg, strlen($hello_msg)) or die("Unable to send data to the  server\n");
+        $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
+        echo "Message from the server :".$server_connect;
+        socket_close($socket_creation);
 
       // set some variables
             // $host = "103.133.133.193";
