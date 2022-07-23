@@ -33,4 +33,5 @@ Route::any('startcharging', [MainController::class,'startcharging']);
 Route::any('stopcharging', [MainController::class,'stopcharging']);
 Route::any('priceunitlist', [MainController::class,'priceunitlist']);
 Route::any('chargerstatus', [MainController::class,'chargerstatus']);
+Route::any('websocket', [MainController::class,'websocket']);
 });
