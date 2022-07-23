@@ -318,32 +318,32 @@ class MainController extends Controller
             // socket_close($spawn);
             // socket_close($socket);
 
-            $host    = "localhost";
-            $port    = 8080;
-            // $message = "Hello Server";
-            // echo "Message To server :".$message;
-            // create socket
-            $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("Could not create socket\n");
-            // connect to server
-            $result = socket_connect($socket, $host, $port) or die("Could not connect to server\n");  
-            // send string to server
-            // socket_write($socket, $message, strlen($message)) or die("Could not send data to server\n");
-            // get server response
-            $result = socket_read ($socket, 1024) or die("Could not read server response\n");
-            echo "Reply From Server  :".$result;
-            // close socket
-            socket_close($socket);
+            // $host    = "localhost";
+            // $port    = 8080;
+            // // $message = "Hello Server";
+            // // echo "Message To server :".$message;
+            // // create socket
+            // $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("Could not create socket\n");
+            // // connect to server
+            // $result = socket_connect($socket, $host, $port) or die("Could not connect to server\n");  
+            // // send string to server
+            // // socket_write($socket, $message, strlen($message)) or die("Could not send data to server\n");
+            // // get server response
+            // $result = socket_read ($socket, 1024) or die("Could not read server response\n");
+            // echo "Reply From Server  :".$result;
+            // // close socket
+            // socket_close($socket);
 
-        // $sock = stream_socket_client("ws://103.133.133.19:8080/webservice/ocpp/CS12",$error,$errnum,30,STREAM_CLIENT_CONNECT,stream_context_create(null));
-        // if (!$sock) {
-        //     echo "[$errnum] $error" . PHP_EOL;
-        // } else {
-        //   echo "Connected - Do NOT get rekt!" . PHP_EOL;
-        //   fwrite($sock, "GET /stream?streams=btcusdt@kline_1m HTTP/1.1\r\nHost: stream.binance.com:9443\r\nAccept: */*\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: ".rand(0,999)."\r\n\r\n");
-        //   while (!feof($sock)) {
-        //     var_dump(explode(",",fgets($sock, 512)));
-        //   }
-        // }
+        $sock = stream_socket_client("ws://localhost:8080/webservice/ocpp/CS12",$error,$errnum,30,STREAM_CLIENT_CONNECT,stream_context_create(null));
+        if (!$sock) {
+            echo "[$errnum] $error" . PHP_EOL;
+        } else {
+          echo "Connected - Do NOT get rekt!" . PHP_EOL;
+          fwrite($sock, "GET /stream?streams=btcusdt@kline_1m HTTP/1.1\r\nHost: stream.binance.com:9443\r\nAccept: */*\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: ".rand(0,999)."\r\n\r\n");
+          while (!feof($sock)) {
+            var_dump(explode(",",fgets($sock, 512)));
+          }
+        }
         
         // error_reporting(E_ALL);
         // /* Get the port for the WWW service. */
