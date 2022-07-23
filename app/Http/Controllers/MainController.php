@@ -15,7 +15,7 @@ use Session;
 use Response;
 use Validator;
 use URL;
-use WebSocket\Client;
+use Client;
 
 class MainController extends Controller
 {
