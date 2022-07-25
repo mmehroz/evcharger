@@ -289,7 +289,8 @@ class MainController extends Controller
         $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
         socket_write($socket_creation, $data, strlen($data)) or die("Unable to send data to the  server\n");
         $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
-        return response()->json(['data' => $server_connect],200);
+        $sortdata = mb_convert_encoding($server_connect, 'UTF-8', 'UTF-8');
+        return response()->json(['data' => $sortdata, 'message' => 'Charger Status'],200);
         socket_close($socket_creation);
 
       // set some variables
