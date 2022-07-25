@@ -163,7 +163,7 @@ class MainController extends Controller
         if(empty($error)) {
             $sql = "SELECT id, latestNotifTimeStamp FROM `activeCS` where latestNotifTimeStamp is not NULL and conStatus = 'ON' ";
             $result = $conn->query($sql);
-            dd($result);
+            dd($sql);
             // $currentDate = date('YmdHis', strtotime("-90 seconds"));
 
             // if ($result->num_rows > 0) {
