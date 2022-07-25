@@ -16,7 +16,7 @@ use Response;
 use Validator;
 use URL;
 use WebSocket\Client;
-use App\Model\MsgHandler;
+use App\Models\MsgHandler;
 
 class MainController extends Controller
 {
