@@ -293,30 +293,30 @@ class MainController extends Controller
         // socket_close($socket_creation);
 
       // set some variables
-            // $host = "localhost";
-            // $port = 8080;
-            // // don't timeout!
-            // // set_time_limit(0);
-            // // create socket
-            // $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("Could not create socket\n");
-            // // bind socket to port
-            // $result = socket_bind($socket, $host, $port) or die("Could not bind to socket\n");
-            // // start listening for connections
-            // $result = socket_listen($socket, 3) or die("Could not set up socket listener\n");
-            // // accept incoming connections
-            // // spawn another socket to handle communication
-            // $spawn = socket_accept($socket) or die("Could not accept incoming connection\n");
-            // // read client input
-            // $input = socket_read($spawn, 1024) or die("Could not read input\n");
-            // // clean up input string
-            // $input = trim($input);
-            // echo "Client Message : ".$input;
-            // // reverse client input and send back
-            // $output = strrev($input) . "\n";
-            // socket_write($spawn, $output, strlen ($output)) or die("Could not write output\n");
-            // // close sockets
-            // socket_close($spawn);
-            // socket_close($socket);
+            $host = "localhost";
+            $port = 8080;
+            // don't timeout!
+            // set_time_limit(0);
+            // create socket
+            $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("Could not create socket\n");
+            // bind socket to port
+            $result = socket_bind($socket, $host, $port) or die("Could not bind to socket\n");
+            // start listening for connections
+            $result = socket_listen($socket, 3) or die("Could not set up socket listener\n");
+            // accept incoming connections
+            // spawn another socket to handle communication
+            $spawn = socket_accept($socket) or die("Could not accept incoming connection\n");
+            // read client input
+            $input = socket_read($spawn, 1024) or die("Could not read input\n");
+            // clean up input string
+            $input = trim($input);
+            echo "Client Message : ".$input;
+            // reverse client input and send back
+            $output = strrev($input) . "\n";
+            socket_write($spawn, $output, strlen ($output)) or die("Could not write output\n");
+            // close sockets
+            socket_close($spawn);
+            socket_close($socket);
 
             // $host    = "localhost";
             // $port    = 8080;
@@ -345,41 +345,41 @@ class MainController extends Controller
         //   }
         // }
         
-        error_reporting(E_ALL);
-        /* Get the port for the WWW service. */
-        $service_port = '8080';
+        // error_reporting(E_ALL);
+        // /* Get the port for the WWW service. */
+        // $service_port = '8080';
 
-        /* Get the IP address for the target host. */
-        $address = gethostbyname('localhost');
+        // /* Get the IP address for the target host. */
+        // $address = gethostbyname('localhost');
 
-        /* Create a TCP/IP socket. */
-        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        if ($socket === false) {
-            echo "socket_create() failed: reason: " . 
-                 socket_strerror(socket_last_error()) . "\n";
-        }
+        // /* Create a TCP/IP socket. */
+        // $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        // if ($socket === false) {
+        //     echo "socket_create() failed: reason: " . 
+        //          socket_strerror(socket_last_error()) . "\n";
+        // }
 
-        echo "Attempting to connect to '$address' on port '$service_port'...";
-        $result = socket_connect($socket, $address, $service_port);
-        if ($result === false) {
-            echo "socket_connect() failed.\nReason: ($result) " . 
-                  socket_strerror(socket_last_error($socket)) . "\n";
-        }
+        // echo "Attempting to connect to '$address' on port '$service_port'...";
+        // $result = socket_connect($socket, $address, $service_port);
+        // if ($result === false) {
+        //     echo "socket_connect() failed.\nReason: ($result) " . 
+        //           socket_strerror(socket_last_error($socket)) . "\n";
+        // }
 
-        $in = "HEAD / HTTP/1.1\r\n";
-        $in .= "Host: localhost\r\n";
-        $in .= "Connection: Close\r\n\r\n";
-        $out = '';
+        // $in = "HEAD / HTTP/1.1\r\n";
+        // $in .= "Host: localhost\r\n";
+        // $in .= "Connection: Close\r\n\r\n";
+        // $out = '';
 
-        echo "Sending HTTP HEAD request...";
-        socket_write($socket, $in, strlen($in));
-        echo "OK.\n";
+        // echo "Sending HTTP HEAD request...";
+        // socket_write($socket, $in, strlen($in));
+        // echo "OK.\n";
 
-        echo "Reading response:\n\n";
-        while ($out = socket_read($socket, 2048)) {
-            echo $out;
-        }
+        // echo "Reading response:\n\n";
+        // while ($out = socket_read($socket, 2048)) {
+        //     echo $out;
+        // }
 
-        socket_close($socket);
+        // socket_close($socket);
     }
 }
