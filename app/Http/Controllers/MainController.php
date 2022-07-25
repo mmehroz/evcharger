@@ -139,15 +139,52 @@ class MainController extends Controller
         if ($validate->fails()) {    
             return response()->json("Fields Required", 400);
         }
-        $getdetail = DB::table('charger')
-        ->select('*')
-        ->where('station_id','=',$request->station_id)
-        ->where('charger_id','=',$request->charger_id)
-        ->first();
-        $getstatus = DB::connection('mysql2')->table('activeCS')
-        ->select('*')
-        ->where('csName','=',$getdetail->charger_name)
-        ->first();
+        // $getdetail = DB::table('charger')
+        // ->select('*')
+        // ->where('station_id','=',$request->station_id)
+        // ->where('charger_id','=',$request->charger_id)
+        // ->first();
+        // $getstatus = DB::connection('mysql2')->table('activeCS')
+        // ->select('*')
+        // ->where('csName','=',$getdetail->charger_name)
+        // ->first();
+        set_time_limit(0);
+        $servername = "localhost";
+        $username = "admin_ocpp";
+        $password = "Qeg5dOy7VN";
+        $dbname = "admin_ocpp";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        $error = '';
+        if ($conn->connect_error) {
+            $error = "Connection failed: " . $conn->connect_error;
+        }
+
+        if(empty($error)) {
+            $sql = "SELECT id, latestNotifTimeStamp FROM `activeCS` where latestNotifTimeStamp is not NULL and conStatus = 'ON' ";
+            $result = $conn->query($sql);
+            dd($result);
+            // $currentDate = date('YmdHis', strtotime("-90 seconds"));
+
+            // if ($result->num_rows > 0) {
+            //     while($row = $result->fetch_assoc()) {
+            //         $latestNotifTS = date('YmdHis', strtotime($row['latestNotifTimeStamp']));
+            //         // echo "currentDate >> $currentDate >> latestNotifTS >> $latestNotifTS"; exit();
+            //         if($latestNotifTS < $currentDate) {
+            //             $sqlUpdate = "UPDATE activeCS SET conStatus = 'OFF', conStatusTimeStamp = '" . date('Y-m-d H:i:s') . "'  WHERE id = " . $row['id'];
+
+            //             $updateStatus = $conn->query($sqlUpdate);
+            //             $conn->close();
+            //             if ($updateStatus === TRUE) {
+            //                 echo 1;
+            //             }else {
+            //                 echo 0;
+            //             }
+            //         }
+            //     }
+            // }
+        }
+
         if($getstatus){
             return response()->json(['data' => $getstatus, 'message' => 'Charger Status'],200);
         }else{
