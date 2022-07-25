@@ -16,6 +16,7 @@ use Response;
 use Validator;
 use URL;
 use WebSocket\Client;
+use App\Model\MsgHandler;
 
 class MainController extends Controller
 {
@@ -139,56 +140,15 @@ class MainController extends Controller
         if ($validate->fails()) {    
             return response()->json("Fields Required", 400);
         }
-        // $getdetail = DB::table('charger')
-        // ->select('*')
-        // ->where('station_id','=',$request->station_id)
-        // ->where('charger_id','=',$request->charger_id)
-        // ->first();
-        // $getstatus = DB::connection('mysql2')->table('activeCS')
-        // ->select('*')
-        // ->where('csName','=',$getdetail->charger_name)
-        // ->first();
-        set_time_limit(0);
-        $servername = "localhost";
-        $username = "admin_ocpp";
-        $password = "Qeg5dOy7VN";
-        $dbname = "admin_ocpp";
-        $conn = new \mysqli($servername, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        $sql = "SELECT * FROM activeCS WHERE csName = 'CS123'";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                $bootNotif = json_decode($row['BootNotification']);
-                // echo '<pre>';
-                // print_r($row);
-                // print_r($bootNotif);
-                // echo '</pre>';
-
-                // $csName = $row['csName'];
-                // $latestNotif = $row['latestNotif'];
-                // $latestTS = $row['latestNotifTimeStamp'];
-                // $imsi = isset($bootNotif[3]->imsi) ? $bootNotif[3]->imsi : '';
-                // $iccid = isset($bootNotif[3]->iccid) ? $bootNotif[3]->iccid : '';
-                // $meterType = isset($bootNotif[3]->meterType) ? $bootNotif[3]->meterType : '';
-                // $meterSerialNumber = isset($bootNotif[3]->meterSerialNumber) ? $bootNotif[3]->meterSerialNumber : '';
-                // $chargeBoxSerialNumber = isset($bootNotif[3]->chargeBoxSerialNumber) ? $bootNotif[3]->chargeBoxSerialNumber : '';
-                // $chargePointSerialNumber = isset($bootNotif[3]->chargePointSerialNumber) ? $bootNotif[3]->chargePointSerialNumber : '';
-                // $firmwareVersion = isset($bootNotif[3]->firmwareVersion) ? $bootNotif[3]->firmwareVersion : '';
-                // $chargePointModel = isset($bootNotif[3]->chargePointModel) ? $bootNotif[3]->chargePointModel : '';
-                // $chargePointVendor = isset($bootNotif[3]->chargePointVendor) ? $bootNotif[3]->chargePointVendor : '';
-                $conStatus = $row['conStatus'];
-                // $conStatusTS = $row['conStatusTimeStamp'];
-            }
-        }
-        $conn->close();
-        dd($conStatus);
-
+        $getdetail = DB::table('charger')
+        ->select('*')
+        ->where('station_id','=',$request->station_id)
+        ->where('charger_id','=',$request->charger_id)
+        ->first();
+        $getstatus = DB::connection('mysql2')->table('activeCS')
+        ->select('*')
+        ->where('csName','=',$getdetail->charger_name)
+        ->first();
         if($getstatus){
             return response()->json(['data' => $getstatus, 'message' => 'Charger Status'],200);
         }else{
@@ -305,34 +265,36 @@ class MainController extends Controller
         // }
         // $client->close();
 
-        $host = 'localhost';  //where is the websocket server
-        $port = 8080;
-        $local = "ws://localhost:8080/webservice/ocpp/CS12";  //url where this script run
-        $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
-        $head = "GET / HTTP/1.1"."\r\n".
-                    "Upgrade: WebSocket"."\r\n".
-                    "Connection: Upgrade"."\r\n".
-                    "Origin: $local"."\r\n".
-                    "Host: $host"."\r\n".
-                    "Content-Length: ".strlen($data)."\r\n"."\r\n";
-        //WebSocket handshake
-        $sock = fsockopen($host, $port, $errno, $errstr, 2);
-        fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
-        $headers = fread($sock, 2000);
-        fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
-        $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
-        fclose($sock);
-        $port_number    = 8080;
-        $IPadress_host    = "103.133.133.19";
-        $hello_msg= "This is server";
-        //  echo "Hitting the server :".$hello_msg;
-        $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
-        $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
-        socket_write($socket_creation, $data, strlen($data)) or die("Unable to send data to the  server\n");
-        $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
-        $sortdata = mb_convert_encoding($server_connect, 'UTF-8', 'UTF-8');
-        return response()->json(['data' => $sortdata, 'message' => 'Charger Status'],200);
-        socket_close($socket_creation);
+        // Working Code Start
+        // $host = 'localhost';  //where is the websocket server
+        // $port = 8080;
+        // $local = "ws://localhost:8080/webservice/ocpp/CS12";  //url where this script run
+        // $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
+        // $head = "GET / HTTP/1.1"."\r\n".
+        //             "Upgrade: WebSocket"."\r\n".
+        //             "Connection: Upgrade"."\r\n".
+        //             "Origin: $local"."\r\n".
+        //             "Host: $host"."\r\n".
+        //             "Content-Length: ".strlen($data)."\r\n"."\r\n";
+        // //WebSocket handshake
+        // $sock = fsockopen($host, $port, $errno, $errstr, 2);
+        // fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
+        // $headers = fread($sock, 2000);
+        // fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
+        // $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
+        // fclose($sock);
+        // $port_number    = 8080;
+        // $IPadress_host    = "103.133.133.19";
+        // $hello_msg= "This is server";
+        // //  echo "Hitting the server :".$hello_msg;
+        // $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
+        // $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
+        // socket_write($socket_creation, $data, strlen($data)) or die("Unable to send data to the  server\n");
+        // $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
+        // $sortdata = mb_convert_encoding($server_connect, 'UTF-8', 'UTF-8');
+        // return response()->json(['data' => $sortdata, 'message' => 'Charger Status'],200);
+        // socket_close($socket_creation);
+        // Working Code End
 
       // set some variables
             // $host = "localhost";
@@ -423,5 +385,50 @@ class MainController extends Controller
         // }
 
         // socket_close($socket);
+
+        set_time_limit(0);
+        ini_set("default_socket_timeout", '-1');
+
+        define('HOST_NAME',"127.0.0.1");
+        define('PORT',"8080");
+        $null = NULL;
+        $msgHandler = new MsgHandler();
+        $socketResource = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        socket_set_option($socketResource, SOL_SOCKET, SO_REUSEADDR, 1);
+        socket_bind($socketResource, 0, PORT);
+        socket_listen($socketResource);
+
+        $clientSocketArray = array($socketResource);
+        while (true) {
+                $newSocketArray = $clientSocketArray;
+                socket_select($newSocketArray, $null, $null, 0, 10);
+
+                if (in_array($socketResource, $newSocketArray)) {
+                        $newSocket = socket_accept($socketResource);
+                        $clientSocketArray[] = $newSocket;
+
+                        $header = socket_read($newSocket, 1024);
+                        socket_getpeername($newSocket, $client_ip_address);
+
+                        $chargeStation = $msgHandler->validateRequestURL($header, $client_ip_address);
+
+                        $msgHandler->logHeaders($client_ip_address, $header);
+
+                        if(empty($chargeStation) || (strpos($chargeStation, '/') !== false)) {
+                                $connectionACK = $msgHandler->connectionDisconnectACK($client_ip_address);
+                                $csstatus = "OFF";
+                        }else {
+                                $csstatus = "ON";
+                                $msgHandler->doHandshake($header, $newSocket, HOST_NAME, PORT);
+                                $connectionACK = $msgHandler->newConnectionACK($client_ip_address);
+                        }
+                        $msgHandler->send($connectionACK, $newSocket);
+                        $newSocketIndex = array_search($socketResource, $newSocketArray);
+                        unset($newSocketArray[$newSocketIndex]);
+                }
+        }
+        echo($csstatus);
+        socket_close($socketResource);
+
     }
 }
