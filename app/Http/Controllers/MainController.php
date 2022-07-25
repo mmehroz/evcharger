@@ -153,7 +153,7 @@ class MainController extends Controller
         $username = "admin_ocpp";
         $password = "Qeg5dOy7VN";
         $dbname = "admin_ocpp";
-        $conn = new mysqli($servername, $username, $password, $dbname);
+        $conn = new \mysqli($servername, $username, $password, $dbname);
 
         $error = '';
         if ($conn->connect_error) {
