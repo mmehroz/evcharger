@@ -161,7 +161,7 @@ class MainController extends Controller
         }
 
         if(empty($error)) {
-            $sql = DB::select('SELECT id, latestNotifTimeStamp FROM `activeCS` where latestNotifTimeStamp is not NULL and conStatus = 'ON'');
+            $sql = DB::select('SELECT id, latestNotifTimeStamp FROM `activeCS` where latestNotifTimeStamp is not NULL and conStatus = "ON"');
 
             // $sql = "SELECT id, latestNotifTimeStamp FROM `activeCS` where latestNotifTimeStamp is not NULL and conStatus = 'ON' ";
             $result = $conn->query($sql);
