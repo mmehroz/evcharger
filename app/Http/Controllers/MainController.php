@@ -264,59 +264,59 @@ class MainController extends Controller
         // }
         // $client->close();
 
-        // $host = 'localhost';  //where is the websocket server
-        // $port = 8080;
-        // $local = "ws://localhost:8080/webservice/ocpp/CS12";  //url where this script run
-        // $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
-        // $head = "GET / HTTP/1.1"."\r\n".
-        //             "Upgrade: WebSocket"."\r\n".
-        //             "Connection: Upgrade"."\r\n".
-        //             "Origin: $local"."\r\n".
-        //             "Host: $host"."\r\n".
-        //             "Content-Length: ".strlen($data)."\r\n"."\r\n";
-        // //WebSocket handshake
-        // $sock = fsockopen($host, $port, $errno, $errstr, 2);
-        // fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
-        // $headers = fread($sock, 2000);
-        // fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
-        // $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
-        // fclose($sock);
-        // $port_number    = 8080;
-        // $IPadress_host    = "103.133.133.19";
-        // $hello_msg= "This is server";
-        // echo "Hitting the server :".$hello_msg;
-        // $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
-        // $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
-        // socket_write($socket_creation, $hello_msg, strlen($hello_msg)) or die("Unable to send data to the  server\n");
-        // $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
-        // echo "Message from the server :".$server_connect;
-        // socket_close($socket_creation);
+        $host = 'localhost';  //where is the websocket server
+        $port = 8080;
+        $local = "ws://localhost:8080/webservice/ocpp/CS12";  //url where this script run
+        $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
+        $head = "GET / HTTP/1.1"."\r\n".
+                    "Upgrade: WebSocket"."\r\n".
+                    "Connection: Upgrade"."\r\n".
+                    "Origin: $local"."\r\n".
+                    "Host: $host"."\r\n".
+                    "Content-Length: ".strlen($data)."\r\n"."\r\n";
+        //WebSocket handshake
+        $sock = fsockopen($host, $port, $errno, $errstr, 2);
+        fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
+        $headers = fread($sock, 2000);
+        fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
+        $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
+        fclose($sock);
+        $port_number    = 8080;
+        $IPadress_host    = "103.133.133.19";
+        $hello_msg= "This is server";
+        echo "Hitting the server :".$hello_msg;
+        $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
+        $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
+        socket_write($socket_creation, $hello_msg, strlen($hello_msg)) or die("Unable to send data to the  server\n");
+        $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
+        echo "Message from the server :".$server_connect;
+        socket_close($socket_creation);
 
       // set some variables
-            $host = "localhost";
-            $port = 8080;
-            // don't timeout!
-            // set_time_limit(0);
-            // create socket
-            $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("Could not create socket\n");
-            // bind socket to port
-            $result = socket_bind($socket, $host, $port) or die("Could not bind to socket\n");
-            // start listening for connections
-            $result = socket_listen($socket, 3) or die("Could not set up socket listener\n");
-            // accept incoming connections
-            // spawn another socket to handle communication
-            $spawn = socket_accept($socket) or die("Could not accept incoming connection\n");
-            // read client input
-            $input = socket_read($spawn, 1024) or die("Could not read input\n");
-            // clean up input string
-            $input = trim($input);
-            echo "Client Message : ".$input;
-            // reverse client input and send back
-            $output = strrev($input) . "\n";
-            socket_write($spawn, $output, strlen ($output)) or die("Could not write output\n");
-            // close sockets
-            socket_close($spawn);
-            socket_close($socket);
+            // $host = "localhost";
+            // $port = 8080;
+            // // don't timeout!
+            // // set_time_limit(0);
+            // // create socket
+            // $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("Could not create socket\n");
+            // // bind socket to port
+            // $result = socket_bind($socket, $host, $port) or die("Could not bind to socket\n");
+            // // start listening for connections
+            // $result = socket_listen($socket, 3) or die("Could not set up socket listener\n");
+            // // accept incoming connections
+            // // spawn another socket to handle communication
+            // $spawn = socket_accept($socket) or die("Could not accept incoming connection\n");
+            // // read client input
+            // $input = socket_read($spawn, 1024) or die("Could not read input\n");
+            // // clean up input string
+            // $input = trim($input);
+            // echo "Client Message : ".$input;
+            // // reverse client input and send back
+            // $output = strrev($input) . "\n";
+            // socket_write($spawn, $output, strlen ($output)) or die("Could not write output\n");
+            // // close sockets
+            // socket_close($spawn);
+            // socket_close($socket);
 
             // $host    = "localhost";
             // $port    = 8080;
