@@ -266,34 +266,34 @@ class MainController extends Controller
         // $client->close();
 
         // Working Code Start
-        // $host = 'localhost';  //where is the websocket server
-        // $port = 8080;
-        // $local = "ws://localhost:8080/webservice/ocpp/CS12";  //url where this script run
-        // $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
-        // $head = "GET / HTTP/1.1"."\r\n".
-        //             "Upgrade: WebSocket"."\r\n".
-        //             "Connection: Upgrade"."\r\n".
-        //             "Origin: $local"."\r\n".
-        //             "Host: $host"."\r\n".
-        //             "Content-Length: ".strlen($data)."\r\n"."\r\n";
-        // //WebSocket handshake
-        // $sock = fsockopen($host, $port, $errno, $errstr, 2);
-        // fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
-        // $headers = fread($sock, 2000);
-        // fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
-        // $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
-        // fclose($sock);
-        // $port_number    = 8080;
-        // $IPadress_host    = "103.133.133.19";
-        // $hello_msg= "This is server";
-        // //  echo "Hitting the server :".$hello_msg;
-        // $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
-        // $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
-        // socket_write($socket_creation, $data, strlen($data)) or die("Unable to send data to the  server\n");
-        // $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
-        // $sortdata = mb_convert_encoding($server_connect, 'UTF-8', 'UTF-8');
-        // return response()->json(['data' => $sortdata, 'message' => 'Charger Status'],200);
-        // socket_close($socket_creation);
+        $host = 'localhost';  //where is the websocket server
+        $port = 8080;
+        $local = "ws://localhost:8080/webservice/ocpp/CS12";  //url where this script run
+        $data = '[2,"opscs62b57e2bc9da0","RemoteStartTransaction",{"connectorId":1,"idTag":"0202200220200010"}]';  //data to be send
+        $head = "GET / HTTP/1.1"."\r\n".
+                    "Upgrade: WebSocket"."\r\n".
+                    "Connection: Upgrade"."\r\n".
+                    "Origin: $local"."\r\n".
+                    "Host: $host"."\r\n".
+                    "Content-Length: ".strlen($data)."\r\n"."\r\n";
+        //WebSocket handshake
+        $sock = fsockopen($host, $port, $errno, $errstr, 2);
+        fwrite($sock, $head ) or die('error:'.$errno.':'.$errstr);
+        $headers = fread($sock, 2000);
+        fwrite($sock, "\x00$data\xff" ) or die('error:'.$errno.':'.$errstr);
+        $wsdata = fread($sock, 2000);  //receives the data included in the websocket package "\x00DATA\xff"
+        fclose($sock);
+        $port_number    = 8080;
+        $IPadress_host    = "103.133.133.19";
+        $hello_msg= "This is server";
+        //  echo "Hitting the server :".$hello_msg;
+        $socket_creation = socket_create(AF_INET, SOCK_STREAM, 0) or die("Unable to create connection with socket\n");
+        $server_connect = socket_connect($socket_creation, $IPadress_host , $port_number) or die("Unable to create connection with server\n");
+        socket_write($socket_creation, $data, strlen($data)) or die("Unable to send data to the  server\n");
+        $server_connect = socket_read ($socket_creation, 1024) or die("Unable to read response from the server\n");
+        $sortdata = mb_convert_encoding($server_connect, 'UTF-8', 'UTF-8');
+        return response()->json(['data' => $sortdata, 'message' => 'Charger Status'],200);
+        socket_close($socket_creation);
         // Working Code End
 
       // set some variables
@@ -386,49 +386,49 @@ class MainController extends Controller
 
         // socket_close($socket);
 
-        set_time_limit(0);
-        ini_set("default_socket_timeout", '-1');
+        // set_time_limit(0);
+        // ini_set("default_socket_timeout", '-1');
 
-        define('HOST_NAME',"localhost");
-        define('PORT',"8080");
-        $null = NULL;
-        $msgHandler = new MsgHandler();
-        $socketResource = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        socket_set_option($socketResource, SOL_SOCKET, SO_REUSEADDR, 1);
-        // socket_bind($socketResource, 0, PORT);
-        socket_listen($socketResource);
+        // define('HOST_NAME',"localhost");
+        // define('PORT',"8080");
+        // $null = NULL;
+        // $msgHandler = new MsgHandler();
+        // $socketResource = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        // socket_set_option($socketResource, SOL_SOCKET, SO_REUSEADDR, 1);
+        // // socket_bind($socketResource, 0, PORT);
+        // socket_listen($socketResource);
 
-        $clientSocketArray = array($socketResource);
-        while (true) {
-                $newSocketArray = $clientSocketArray;
-                socket_select($newSocketArray, $null, $null, 0, 10);
+        // $clientSocketArray = array($socketResource);
+        // while (true) {
+        //         $newSocketArray = $clientSocketArray;
+        //         socket_select($newSocketArray, $null, $null, 0, 10);
 
-                if (in_array($socketResource, $newSocketArray)) {
-                        $newSocket = socket_accept($socketResource);
-                        $clientSocketArray[] = $newSocket;
+        //         if (in_array($socketResource, $newSocketArray)) {
+        //                 $newSocket = socket_accept($socketResource);
+        //                 $clientSocketArray[] = $newSocket;
 
-                        $header = socket_read($newSocket, 1024);
-                        socket_getpeername($newSocket, $client_ip_address);
+        //                 $header = socket_read($newSocket, 1024);
+        //                 socket_getpeername($newSocket, $client_ip_address);
 
-                        $chargeStation = $msgHandler->validateRequestURL($header, $client_ip_address);
+        //                 $chargeStation = $msgHandler->validateRequestURL($header, $client_ip_address);
 
-                        $msgHandler->logHeaders($client_ip_address, $header);
+        //                 $msgHandler->logHeaders($client_ip_address, $header);
 
-                        if(empty($chargeStation) || (strpos($chargeStation, '/') !== false)) {
-                                $connectionACK = $msgHandler->connectionDisconnectACK($client_ip_address);
-                                $csstatus = "OFF";
-                        }else {
-                                $csstatus = "ON";
-                                $msgHandler->doHandshake($header, $newSocket, HOST_NAME, PORT);
-                                $connectionACK = $msgHandler->newConnectionACK($client_ip_address);
-                        }
-                        $msgHandler->send($connectionACK, $newSocket);
-                        $newSocketIndex = array_search($socketResource, $newSocketArray);
-                        unset($newSocketArray[$newSocketIndex]);
-                }
-        }
-        echo($csstatus);
-        socket_close($socketResource);
+        //                 if(empty($chargeStation) || (strpos($chargeStation, '/') !== false)) {
+        //                         $connectionACK = $msgHandler->connectionDisconnectACK($client_ip_address);
+        //                         $csstatus = "OFF";
+        //                 }else {
+        //                         $csstatus = "ON";
+        //                         $msgHandler->doHandshake($header, $newSocket, HOST_NAME, PORT);
+        //                         $connectionACK = $msgHandler->newConnectionACK($client_ip_address);
+        //                 }
+        //                 $msgHandler->send($connectionACK, $newSocket);
+        //                 $newSocketIndex = array_search($socketResource, $newSocketArray);
+        //                 unset($newSocketArray[$newSocketIndex]);
+        //         }
+        // }
+        // echo($csstatus);
+        // socket_close($socketResource);
 
     }
 }
