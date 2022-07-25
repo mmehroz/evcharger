@@ -155,35 +155,39 @@ class MainController extends Controller
         $dbname = "admin_ocpp";
         $conn = new \mysqli($servername, $username, $password, $dbname);
 
-        $error = '';
         if ($conn->connect_error) {
-            $error = "Connection failed: " . $conn->connect_error;
+            die("Connection failed: " . $conn->connect_error);
         }
 
-        if(empty($error)) {
-            $sql = "SELECT * FROM activeCS WHERE csName = 'CS123'";
-            $result = $conn->query($sql);
-            dd($result);
-            // $currentDate = date('YmdHis', strtotime("-90 seconds"));
+        $sql = "SELECT * FROM activeCS WHERE csName = 'CS123'";
+        $result = $conn->query($sql);
 
-            // if ($result->num_rows > 0) {
-            //     while($row = $result->fetch_assoc()) {
-            //         $latestNotifTS = date('YmdHis', strtotime($row['latestNotifTimeStamp']));
-            //         // echo "currentDate >> $currentDate >> latestNotifTS >> $latestNotifTS"; exit();
-            //         if($latestNotifTS < $currentDate) {
-            //             $sqlUpdate = "UPDATE activeCS SET conStatus = 'OFF', conStatusTimeStamp = '" . date('Y-m-d H:i:s') . "'  WHERE id = " . $row['id'];
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $bootNotif = json_decode($row['BootNotification']);
+                // echo '<pre>';
+                // print_r($row);
+                // print_r($bootNotif);
+                // echo '</pre>';
 
-            //             $updateStatus = $conn->query($sqlUpdate);
-            //             $conn->close();
-            //             if ($updateStatus === TRUE) {
-            //                 echo 1;
-            //             }else {
-            //                 echo 0;
-            //             }
-            //         }
-            //     }
-            // }
+                // $csName = $row['csName'];
+                // $latestNotif = $row['latestNotif'];
+                // $latestTS = $row['latestNotifTimeStamp'];
+                // $imsi = isset($bootNotif[3]->imsi) ? $bootNotif[3]->imsi : '';
+                // $iccid = isset($bootNotif[3]->iccid) ? $bootNotif[3]->iccid : '';
+                // $meterType = isset($bootNotif[3]->meterType) ? $bootNotif[3]->meterType : '';
+                // $meterSerialNumber = isset($bootNotif[3]->meterSerialNumber) ? $bootNotif[3]->meterSerialNumber : '';
+                // $chargeBoxSerialNumber = isset($bootNotif[3]->chargeBoxSerialNumber) ? $bootNotif[3]->chargeBoxSerialNumber : '';
+                // $chargePointSerialNumber = isset($bootNotif[3]->chargePointSerialNumber) ? $bootNotif[3]->chargePointSerialNumber : '';
+                // $firmwareVersion = isset($bootNotif[3]->firmwareVersion) ? $bootNotif[3]->firmwareVersion : '';
+                // $chargePointModel = isset($bootNotif[3]->chargePointModel) ? $bootNotif[3]->chargePointModel : '';
+                // $chargePointVendor = isset($bootNotif[3]->chargePointVendor) ? $bootNotif[3]->chargePointVendor : '';
+                $conStatus = $row['conStatus'];
+                // $conStatusTS = $row['conStatusTimeStamp'];
+            }
         }
+        $conn->close();
+        dd($conStatus);
 
         if($getstatus){
             return response()->json(['data' => $getstatus, 'message' => 'Charger Status'],200);
