@@ -395,7 +395,7 @@ class MainController extends Controller
         $msgHandler = new MsgHandler();
         $socketResource = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         socket_set_option($socketResource, SOL_SOCKET, SO_REUSEADDR, 1);
-        socket_bind($socketResource, 0, PORT);
+        // socket_bind($socketResource, 0, PORT);
         socket_listen($socketResource);
 
         $clientSocketArray = array($socketResource);
