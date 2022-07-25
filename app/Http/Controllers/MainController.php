@@ -163,7 +163,7 @@ class MainController extends Controller
         if(empty($error)) {
             $sql = "SELECT * FROM `activeCS`";
             $result = $conn->query($sql);
-            dd($result);
+            dd($sql);
             // $currentDate = date('YmdHis', strtotime("-90 seconds"));
 
             // if ($result->num_rows > 0) {
