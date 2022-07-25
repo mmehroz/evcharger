@@ -389,7 +389,7 @@ class MainController extends Controller
         set_time_limit(0);
         ini_set("default_socket_timeout", '-1');
 
-        define('HOST_NAME',"127.0.0.1");
+        define('HOST_NAME',"localhost");
         define('PORT',"8080");
         $null = NULL;
         $msgHandler = new MsgHandler();
